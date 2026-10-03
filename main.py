@@ -124,8 +124,9 @@ class AdminProfileUpdate(BaseModel):
     whatsapp: Optional[str] = None
 
 class DirectLoginRequest(BaseModel):
-    role: str = "user"  # "user" or "admin"
-    username: str
+    role: Optional[str] = "admin"  # "user" or "admin"
+    username: Optional[str] = None
+    phone: Optional[str] = None
     password: str
 
 class DirectRegisterRequest(BaseModel):
@@ -447,13 +448,13 @@ async def auth_logout(request: Request):
 async def auth_direct_login(req: DirectLoginRequest):
     """Direct login for admin strictly matching name 'ugender' and password '5201314'."""
     role = (req.role or "admin").strip().lower()
-    username = req.username.strip()
+    username = (req.username or req.phone or "").strip()
     password = req.password.strip()
 
     if not username or not password:
-        raise HTTPException(status_code=400, detail="Admin name and password are required")
+        raise HTTPException(status_code=400, detail="Admin username and password are required")
 
-    if role == "admin" or username.lower() == "ugender":
+    if role == "admin" or username.lower() in ["ugender", "admin", "chef", "manager"]:
         result = database.authenticate_admin_password(username, password)
         if not result:
             raise HTTPException(
@@ -536,7 +537,7 @@ async def auth_direct_register(req: DirectRegisterRequest):
 
 # --- Legacy Admin Endpoints (Maintained for Backward Compatibility) ---
 
-@app.post("/api/admin/login")
+@app.post("/api/admin/request-otp")
 async def admin_login(req: AdminLoginRequest):
     """Validate phone/user + password, then generate and store OTP."""
     phone = req.phone.strip()
@@ -704,9 +705,9 @@ CURRENT_DIR = Path(__file__).parent
 
 def find_html_file() -> Path:
     candidates = [
+        CURRENT_DIR / "index.html",
         CURRENT_DIR / "sss-healthy-tiffins" / "index.html",
-        CURRENT_DIR / "static" / "index.html",
-        CURRENT_DIR / "index.html"
+        CURRENT_DIR / "static" / "index.html"
     ]
     for c in candidates:
         if c.exists():

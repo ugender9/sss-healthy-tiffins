@@ -2240,7 +2240,7 @@
         const res = await fetch(`${API_BASE}/api/admin/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: name, password: password })
+          body: JSON.stringify({ username: name, phone: name, password: password, role: 'admin' })
         });
 
         if (res.ok) {
@@ -2255,8 +2255,16 @@
           showView('admin');
           loadAdminData();
         } else {
-          const err = await res.json();
-          errBox.textContent = err.detail || 'Invalid admin credentials.';
+          const err = await res.json().catch(() => ({}));
+          let msg = 'Invalid admin credentials.';
+          if (typeof err.detail === 'string') {
+            msg = err.detail;
+          } else if (Array.isArray(err.detail) && err.detail.length > 0) {
+            msg = err.detail.map(d => d.msg || JSON.stringify(d)).join(', ');
+          } else if (err.message) {
+            msg = err.message;
+          }
+          errBox.textContent = msg;
         }
       } catch (e) {
         errBox.textContent = 'Connection error. Is server running?';
