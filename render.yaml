@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sss-healthy-tiffins
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.1
+      - key: DB_PATH
+        value: /data/tiffins.db
+    disk:
+      name: tiffins-data
+      mountPath: /data
+      sizeGB: 1

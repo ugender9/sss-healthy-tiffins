@@ -1,0 +1,12 @@
+services:
+  tiffin-app:
+    build: .
+    container_name: sss-healthy-tiffins
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./tiffins.db:/app/tiffins.db
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+    restart: unless-stopped

@@ -1,0 +1,17 @@
+{
+  "name": "sss-healthy-tiffins",
+  "version": "1.0.0",
+  "description": "S.S.S Healthy Tiffins - Real-Time Morning Kitchen",
+  "scripts": {
+    "dev": "python run.py",
+    "start": "python run.py",
+    "test": "python test_realtime.py"
+  },
+  "keywords": [
+    "tiffins",
+    "fastapi",
+    "websockets"
+  ],
+  "author": "",
+  "license": "ISC"
+}
