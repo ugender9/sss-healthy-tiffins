@@ -1120,14 +1120,359 @@
       to { transform: translateX(0); opacity: 1; }
     }
 
-    /* Footer */
-    footer {
-      margin-top: auto;
-      border-top: 1px solid var(--border-subtle);
-      background: rgba(6, 18, 13, 0.9);
-      padding: 32px clamp(20px, 6vw, 60px);
-      font-size: 13px;
+    /* ========================================================
+       📱 DEDICATED NATIVE-FEEL MOBILE APP STYLING
+       ======================================================== */
+    
+    /* Mobile Bottom Navigation Bar (Hidden on Desktop, Visible on Mobile) */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(6, 18, 13, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-gold);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.7);
+      z-index: 190;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 8px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .mobile-nav-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: transparent;
+      border: 0;
       color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+      min-width: 60px;
+    }
+
+    .mobile-nav-item .mob-icon {
+      font-size: 20px;
+      line-height: 1;
+      transition: transform 0.2s ease;
+    }
+
+    .mobile-nav-item.active {
+      color: var(--gold-light);
+    }
+
+    .mobile-nav-item.active .mob-icon {
+      transform: scale(1.15) translateY(-2px);
+      filter: drop-shadow(0 0 8px var(--gold-glow));
+    }
+
+    .mobile-nav-item .mob-badge {
+      position: absolute;
+      top: 4px;
+      right: 12px;
+      background: #e63946;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      padding: 0 4px;
+      box-shadow: 0 0 10px rgba(230, 57, 70, 0.6);
+    }
+
+    /* Floating Quick Checkout Bar (Mobile App Style) */
+    .mobile-floating-cart-bar {
+      display: none;
+      position: fixed;
+      bottom: 74px;
+      left: 14px;
+      right: 14px;
+      background: var(--gold-gradient);
+      color: #06120d;
+      border-radius: 16px;
+      padding: 12px 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px var(--gold-glow);
+      z-index: 185;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      animation: floatCartPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      touch-action: manipulation;
+    }
+
+    @keyframes floatCartPop {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .mobile-floating-cart-bar.visible {
+      display: flex;
+    }
+
+    .mfc-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mfc-count {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+    }
+
+    .mfc-price {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .mfc-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14.5px;
+      font-weight: 800;
+      background: #06120d;
+      color: var(--gold-light);
+      padding: 7px 14px;
+      border-radius: 10px;
+    }
+
+    /* Responsive Mobile Media Queries */
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 74px; /* Space for sticky bottom navigation */
+      }
+
+      .topbar {
+        padding: 12px 14px;
+        gap: 8px;
+      }
+
+      .brand-title {
+        font-size: 17px;
+      }
+
+      .brand-sub {
+        font-size: 9.5px;
+        letter-spacing: 1px;
+      }
+
+      .logo-symbol {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+        border-radius: 10px;
+      }
+
+      /* Hide bulky desktop nav in topbar; mobile bottom nav handles it */
+      .nav-actions .nav-btn {
+        display: none;
+      }
+
+      .cart-trigger-btn {
+        padding: 7px 14px;
+        font-size: 13px;
+        border-radius: 10px;
+      }
+
+      .order-status-pill {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+
+      .live-sync-indicator {
+        padding: 4px 10px;
+        font-size: 11px;
+      }
+
+      .mobile-bottom-nav {
+        display: flex;
+      }
+
+      /* Hero Section on Mobile */
+      .hero-container {
+        padding: 24px 16px 30px;
+        gap: 20px;
+      }
+
+      .gold-eyebrow {
+        font-size: 10.5px;
+        letter-spacing: 1px;
+      }
+
+      .hero-h1 {
+        font-size: 26px;
+        line-height: 1.25;
+      }
+
+      .hero-description {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .hero-buttons button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .showcase-3d-stage {
+        height: 200px;
+      }
+
+      .plate-3d {
+        width: 160px;
+        height: 160px;
+      }
+
+      .food-dish-3d {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+
+      .floating-badge {
+        font-size: 10px;
+        padding: 5px 9px;
+      }
+
+      /* Menu Grid on Mobile */
+      .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .menu-card {
+        padding: 16px;
+      }
+
+      .dish-art-stage {
+        height: 140px;
+      }
+
+      .dish-icon-3d {
+        font-size: 60px;
+      }
+
+      .card-details h3 {
+        font-size: 19px;
+      }
+
+      .btn-add-tiffin {
+        min-height: 44px;
+        font-size: 13.5px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        touch-action: manipulation;
+      }
+
+      /* Cart Drawer Mobile Sheet */
+      .cart-drawer {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      /* Modals on Mobile */
+      .luxury-modal-card {
+        width: min(94vw, 420px);
+        padding: 24px 18px;
+      }
+
+      .luxury-field input, .luxury-field textarea, .luxury-field select {
+        font-size: 16px; /* Prevents auto-zoom in iOS Safari */
+      }
+
+      /* Toast on Mobile */
+      .toast-tray {
+        left: 14px;
+        right: 14px;
+        bottom: 84px;
+      }
+
+      .luxury-toast {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+
+      /* Stepper Node on Mobile */
+      .lux-stepper {
+        margin: 16px 0 12px;
+      }
+
+      .lux-step-node {
+        font-size: 9.5px;
+        max-width: 65px;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .lux-step-dot {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+      }
+
+      /* Admin Views on Mobile */
+      .admin-tabs-nav {
+        overflow-x: auto;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .admin-tab-btn {
+        white-space: nowrap;
+        padding: 8px 14px;
+        font-size: 12.5px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 14px 12px;
+      }
+
+      .stat-number {
+        font-size: 22px;
+      }
+
+      /* Customer Bookings on Mobile */
+      .order-tracking-card {
+        padding: 16px;
+      }
+
+      /* Safe area insets for notched phones */
+      footer {
+        padding-bottom: 24px;
+      }
     }
   </style>
 </head>
@@ -1509,6 +1854,40 @@
       </button>
     </div>
   </aside>
+
+  <!-- Floating Mobile Cart Bar -->
+  <div class="mobile-floating-cart-bar" id="mobileFloatingCartBar" onclick="toggleCart(true)">
+    <div class="mfc-left">
+      <div class="mfc-count" id="mfcCount">0 Items</div>
+      <div class="mfc-price" id="mfcPrice">₹0</div>
+    </div>
+    <div class="mfc-right">
+      <span>View Basket</span>
+      <span>→</span>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom App Bar -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <button class="mobile-nav-item active" id="mobNavMenu" onclick="showView('menu')">
+      <span class="mob-icon">🥣</span>
+      <span class="mob-label">Menu</span>
+    </button>
+    <button class="mobile-nav-item" id="mobNavBookings" onclick="showView('bookings')">
+      <span class="mob-icon">📋</span>
+      <span class="mob-label">My Orders</span>
+      <span class="mob-badge" id="mobBookingsBadge" style="display: none;">0</span>
+    </button>
+    <button class="mobile-nav-item" id="mobNavCart" onclick="toggleCart(true)">
+      <span class="mob-icon">🛍️</span>
+      <span class="mob-label">Basket</span>
+      <span class="mob-badge" id="mobCartBadge" style="display: none;">0</span>
+    </button>
+    <button class="mobile-nav-item" id="mobNavAdmin" onclick="handleAdminClick()">
+      <span class="mob-icon" id="mobAdminIcon">🔒</span>
+      <span class="mob-label" id="mobAdminLabel">Kitchen</span>
+    </button>
+  </nav>
 
   <!-- Toast Notification Tray -->
   <div class="toast-tray" id="toastContainer"></div>
@@ -1983,6 +2362,24 @@
       totalSpan.textContent = totalPrice;
       formTotal.textContent = totalPrice;
       formSummary.textContent = summaryTextParts.join(', ');
+
+      // Update mobile cart badge & floating mobile checkout bar
+      const mobCartBadge = document.getElementById('mobCartBadge');
+      if (mobCartBadge) {
+        mobCartBadge.textContent = totalItemsCount;
+        mobCartBadge.style.display = totalItemsCount > 0 ? 'grid' : 'none';
+      }
+
+      const floatBar = document.getElementById('mobileFloatingCartBar');
+      if (floatBar) {
+        if (totalItemsCount > 0 && currentView === 'menu') {
+          floatBar.classList.add('visible');
+          document.getElementById('mfcCount').textContent = `${totalItemsCount} ${totalItemsCount === 1 ? 'Dish' : 'Dishes'}`;
+          document.getElementById('mfcPrice').textContent = `₹${totalPrice}`;
+        } else {
+          floatBar.classList.remove('visible');
+        }
+      }
     }
 
     function addToCart(itemId) {
@@ -2049,6 +2446,12 @@
 
       if (badge) {
         badge.textContent = myOrders.length > 0 ? `(${myOrders.length})` : '';
+      }
+
+      const mobBadge = document.getElementById('mobBookingsBadge');
+      if (mobBadge) {
+        mobBadge.textContent = myOrders.length;
+        mobBadge.style.display = myOrders.length > 0 ? 'grid' : 'none';
       }
 
       if (myOrders.length === 0) {
@@ -2296,10 +2699,16 @@
 
     function updateAdminNavState() {
       const btn = document.getElementById('adminNav');
+      const mobIcon = document.getElementById('mobAdminIcon');
+      const mobLabel = document.getElementById('mobAdminLabel');
       if (isAdminAuthenticated) {
-        btn.innerHTML = '👨‍🍳 Kitchen Ops';
+        if (btn) btn.innerHTML = '👨‍🍳 Kitchen Ops';
+        if (mobIcon) mobIcon.innerHTML = '👨‍🍳';
+        if (mobLabel) mobLabel.textContent = 'Kitchen';
       } else {
-        btn.innerHTML = '🔒 Kitchen Ops';
+        if (btn) btn.innerHTML = '🔒 Kitchen Ops';
+        if (mobIcon) mobIcon.innerHTML = '🔒';
+        if (mobLabel) mobLabel.textContent = 'Kitchen';
       }
     }
 
@@ -2577,6 +2986,21 @@
       document.getElementById('menuNav').classList.toggle('active', isMenu);
       document.getElementById('bookingsNav').classList.toggle('active', isBookings);
       document.getElementById('adminNav').classList.toggle('active', isAdmin);
+
+      // Update mobile bottom nav state
+      const mobMenu = document.getElementById('mobNavMenu');
+      const mobBookings = document.getElementById('mobNavBookings');
+      const mobAdmin = document.getElementById('mobNavAdmin');
+      if (mobMenu) mobMenu.classList.toggle('active', isMenu);
+      if (mobBookings) mobBookings.classList.toggle('active', isBookings);
+      if (mobAdmin) mobAdmin.classList.toggle('active', isAdmin);
+
+      // Update mobile floating checkout bar visibility
+      const floatBar = document.getElementById('mobileFloatingCartBar');
+      if (floatBar) {
+        const hasItems = Object.keys(cart).length > 0;
+        floatBar.classList.toggle('visible', isMenu && hasItems);
+      }
 
       if (isBookings) {
         renderCustomerBookings();
