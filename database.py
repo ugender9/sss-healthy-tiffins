@@ -502,11 +502,12 @@ def get_admin_profile():
         "store_open": get_setting("store_open", "1") == "1",
         "upi_id": get_setting("upi_id", "ssstiffins@okaxis"),
         "upi_name": get_setting("upi_name", "S.S.S Healthy Tiffins"),
-        "whatsapp_number": get_setting("whatsapp_number", "919876543210")
+        "whatsapp_number": get_setting("whatsapp_number", "919876543210"),
+        "timings": get_setting("kitchen_timings", "Fresh Morning Batches Steamed Daily · 6:30 AM – 10:30 AM")
     }
 
 def update_admin_profile(name: str = None, phone: str = None, password: str = None, pin: str = None,
-                         upi_id: str = None, whatsapp: str = None):
+                         upi_id: str = None, whatsapp: str = None, timings: str = None):
     if name:
         update_setting("admin_name", name.strip())
     if phone:
@@ -519,6 +520,8 @@ def update_admin_profile(name: str = None, phone: str = None, password: str = No
         update_setting("upi_id", upi_id.strip())
     if whatsapp and whatsapp.strip():
         update_setting("whatsapp_number", whatsapp.strip())
+    if timings and timings.strip():
+        update_setting("kitchen_timings", timings.strip())
     return get_admin_profile()
 
 def toggle_store_status(force_state: bool = None) -> bool:
@@ -633,7 +636,8 @@ def get_all_bookings(status_filter: str = None, search: str = None):
 
 def get_booking_by_id(order_id: str):
     conn = get_db_connection()
-    row = conn.execute("SELECT * FROM bookings WHERE id = ?", (order_id,)).fetchone()
+    clean_id = str(order_id or "").strip()
+    row = conn.execute("SELECT * FROM bookings WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))", (clean_id,)).fetchone()
     conn.close()
     if not row:
         return None
@@ -647,22 +651,24 @@ def get_booking_by_id(order_id: str):
 def update_booking_status(order_id: str, new_status: str):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE bookings SET status = ? WHERE id = ?", (new_status, order_id))
+    clean_id = str(order_id or "").strip()
+    cursor.execute("UPDATE bookings SET status = ? WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))", (new_status, clean_id))
     conn.commit()
     conn.close()
-    return get_booking_by_id(order_id)
+    return get_booking_by_id(clean_id)
 
 def update_payment_status(order_id: str, payment_status: str, transaction_id: str = None):
     conn = get_db_connection()
     cursor = conn.cursor()
+    clean_id = str(order_id or "").strip()
     if transaction_id is not None:
-        cursor.execute("UPDATE bookings SET payment_status = ?, transaction_id = ? WHERE id = ?",
-                       (payment_status, transaction_id, order_id))
+        cursor.execute("UPDATE bookings SET payment_status = ?, transaction_id = ? WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))",
+                       (payment_status, transaction_id, clean_id))
     else:
-        cursor.execute("UPDATE bookings SET payment_status = ? WHERE id = ?", (payment_status, order_id))
+        cursor.execute("UPDATE bookings SET payment_status = ? WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))", (payment_status, clean_id))
     conn.commit()
     conn.close()
-    return get_booking_by_id(order_id)
+    return get_booking_by_id(clean_id)
 
 def get_stats():
     conn = get_db_connection()
@@ -673,6 +679,7 @@ def get_stats():
     active_orders = conn.execute("SELECT COUNT(*) as count FROM bookings WHERE status IN ('Confirmed', 'Preparing', 'Out for Delivery')").fetchone()["count"]
     total_menu_items = conn.execute("SELECT COUNT(*) as count FROM menu_items WHERE is_available = 1").fetchone()["count"]
     store_open = conn.execute("SELECT value FROM settings WHERE key = 'store_open'").fetchone()
+    timings = conn.execute("SELECT value FROM settings WHERE key = 'kitchen_timings'").fetchone()
     conn.close()
     return {
         "total_bookings": total_bookings,
@@ -681,7 +688,8 @@ def get_stats():
         "pending_payments": pending_payments,
         "active_orders": active_orders,
         "total_menu_items": total_menu_items,
-        "store_open": store_open["value"] == "1" if store_open else True
+        "store_open": store_open["value"] == "1" if store_open else True,
+        "timings": timings["value"] if timings else "Fresh Morning Batches Steamed Daily · 6:30 AM – 10:30 AM"
     }
 
 def export_bookings_to_csv() -> str:

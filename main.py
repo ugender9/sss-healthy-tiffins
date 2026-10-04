@@ -122,6 +122,7 @@ class AdminProfileUpdate(BaseModel):
     pin: Optional[str] = None
     upi_id: Optional[str] = None
     whatsapp: Optional[str] = None
+    timings: Optional[str] = None
 
 class DirectLoginRequest(BaseModel):
     role: Optional[str] = "admin"  # "user" or "admin"
@@ -295,20 +296,32 @@ async def create_booking(booking: BookingCreate):
     return created
 
 @app.patch("/api/bookings/{order_id}/status")
+@app.post("/api/bookings/{order_id}/status")
+@app.patch("/api/admin/bookings/{order_id}/status")
+@app.post("/api/admin/bookings/{order_id}/status")
 async def update_booking_status(order_id: str, update: StatusUpdate):
     valid_statuses = ["Confirmed", "Preparing", "Out for Delivery", "Delivered", "Cancelled"]
-    if update.status not in valid_statuses:
-        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {valid_statuses}")
+    clean_id = (order_id or "").strip()
+    status_str = (update.status or "").strip()
 
-    updated = database.update_booking_status(order_id, update.status)
+    matched_status = None
+    for s in valid_statuses:
+        if s.lower() == status_str.lower():
+            matched_status = s
+            break
+
+    if not matched_status:
+        raise HTTPException(status_code=400, detail=f"Invalid status '{update.status}'. Must be one of: {valid_statuses}")
+
+    updated = database.update_booking_status(clean_id, matched_status)
     if not updated:
-        raise HTTPException(status_code=404, detail="Booking not found")
+        raise HTTPException(status_code=404, detail=f"Booking '{clean_id}' not found")
 
     # Broadcast real-time order status update to customer & admin
     await manager.broadcast({
         "event": "STATUS_UPDATED",
-        "order_id": order_id,
-        "status": update.status,
+        "order_id": updated["id"],
+        "status": matched_status,
         "booking": updated,
         "stats": database.get_stats()
     })
@@ -621,7 +634,8 @@ async def update_admin_profile(req: AdminProfileUpdate, request: Request):
 
     updated = database.update_admin_profile(
         name=req.name, phone=req.phone, password=req.password,
-        pin=req.pin, upi_id=req.upi_id, whatsapp=req.whatsapp
+        pin=req.pin, upi_id=req.upi_id, whatsapp=req.whatsapp,
+        timings=req.timings
     )
 
     await manager.broadcast({
